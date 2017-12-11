@@ -2,6 +2,20 @@
 A terminal client for [danger/u/](https://dangeru.us/)
 
 
+## Installation
+You're going to need `requests`, `json` and `colored` to get this to work properly.
+```sh
+$ git clone https://github.com/isvinc3s/awu.git
+$ cd awu
+$ python3 awu.py
+```
+If you want to run it as a regular command:
+```
+$ chmod +x awu.py
+$ sudo cp ./awu.py /usr/local/bin/awu
+```
+
+
 ## Documentation
 Here's how to navigate around danger/u/ with aw/u/
 
