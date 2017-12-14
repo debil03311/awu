@@ -5,7 +5,7 @@ import requests
 import json
 from colored import fg, bg, attr
 
-version = "1.0"
+version = "1.1"
 boards = [ 'a', 'burg', 'cyb', 'd', 'lain', 'mu', 'new', 'tech', 'test', 'u', 'v', 'all' ]
 
 try:
@@ -13,12 +13,19 @@ try:
         print('Commands:')
         print('    --help      Show this list')
         print('    --version   Display version information')
+        print('    --nocolor   Disable the color scheme')
     
     elif sys.argv[1] == "--version":
         print('v' + version)
 
-    else:
-        print('aw/u/:', sys.argv[1] + ': invalid argument')
+    elif sys.argv[1] == "--nocolor":
+        def fg(a):
+            return ""
+        def attr(a):
+            return ""
+
+        if sys.argv[2] == "xD I don't know how to make a good argument thing lol":
+            pass
 
 except IndexError:
 
@@ -37,14 +44,21 @@ except IndexError:
                             
                     # If the thread counter exceeds 18 (max posts on a page), stop the counter and print the boards
                     while tc < 20:
-                        if ( t[tc]['sticky'] == True ):
-                            is_sticky = "yellow"
+                        if ( t[tc]['is_locked'] == True ):
+                            if ( t[tc]['sticky'] == True ):
+                                th_color = "yellow"
+                            else:
+                                th_color = "red"
+
+                        elif ( t[tc]['sticky'] == True):
+                            th_color = "yellow"
+
                         else:
-                            is_sticky = "blue"
+                            th_color = "blue"
                         
                         # Please don't look at this I'm fucking retarded.
                         print('%s' % (fg('red'))       , str( t[tc]['post_id'] ) , 
-                                '%s' % (fg(is_sticky)) , str( t[tc]['title'].encode('utf-8') )[2:][:-1] ,
+                                '%s' % (fg(th_color)) , str( t[tc]['title'].encode('utf-8') )[2:][:-1] ,
                                 '%s' % (fg('red'))     , str( t[tc]['number_of_replies'] ) , 
                                 '%s' % (attr('reset')) )
 
@@ -83,22 +97,26 @@ except IndexError:
                                 while True:
                                     try:
                                         cap = reps[rc]['capcode']
-                                        is_capcode = '%s' % (fg('red')) + str(reps[rc]['capcode'])
+                                        is_capcode = '%s' % (fg('red')) + str(cap)
                                     
                                     except KeyError:
                                         is_capcode = '%sAnonymous' % (fg('blue'))
 
                                     # Please don't look at this either I'm fucking retarded
-                                    print( '\n' + str(is_capcode),
-                                            '%s(%s' % (fg('blue'), fg('red')) + str(reps[rc]['hash']) +
-                                            '%s)  ID: %s' % (fg('blue'), fg('red')) + str(reps[rc]['post_id']) +
-                                            '\n%s| %s' % (fg('blue'), attr('reset')) + 
-                                            str(reps[rc]['comment']) )
+                                    try:
+                                        print(  '\n' + str(is_capcode),
+                                                '%s(%s'       % (fg('blue'), fg('red'))     + str(reps[rc]['hash']) +
+                                                '%s)  No. %s' % (fg('blue'), fg('red'))     + str(reps[rc]['post_id']) +
+                                                '\n%s| %s'    % (fg('blue'), attr('reset')) + str(reps[rc]['comment']) )
+                                    except UnicodeEncodeError:
+                                         print(  '\n' + str(is_capcode),
+                                                '%s(%s'       % (fg('blue'), fg('red'))     + str(reps[rc]['hash']) +
+                                                '%s)  No. %s' % (fg('blue'), fg('red'))     + str(reps[rc]['post_id']) +
+                                                '\n%s| %s'    % (fg('blue'), attr('reset')) + str(reps[rc]['comment'].encode("utf-8") )[2:][:-1] )
 
                                     rc += 1
 
                             except IndexError:
-                                #print('')
                                 pass
 
                         elif th_userin == 'post':
@@ -116,7 +134,7 @@ except IndexError:
                             except KeyboardInterrupt:
                                 pass
 
-                        elif th_userin == 'back' or th_userin == "up":
+                        elif th_userin == 'back' or th_userin == 'up':
                             break
 
                         elif th_userin == 'exit' or th_userin == 'quit':
