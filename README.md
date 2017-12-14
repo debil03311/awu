@@ -50,5 +50,6 @@ To reply to the thread, simply type `post` and fill out the prompts.
 
 ## To do
 - Make it so that you can browse more pages of a board
-- No color mode (I'm probably too retarded to do that so don't expect it to ever be a thing)
+- Display thread title when you show the replies
+- ~~No color mode (I'm probably too retarded to do that so don't expect it to ever be a thing)~~ (Added in 1.1)
 - Clean up the code (lol I definetly won't do this)
