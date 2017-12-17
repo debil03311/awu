@@ -3,14 +3,14 @@ A terminal client for [danger/u/](https://dangeru.us/)
 
 
 ## Installation
-You're going to need `requests`, `json` and `colored` to get this to work properly.
+You're going to need `requests`, `argparse` and `colored` to get this to work properly.
 ```sh
 $ git clone https://github.com/isvinc3s/awu.git
 $ cd awu
 $ python3 awu.py
 ```
 If you want to run it as a regular command:
-```
+```sh
 $ chmod +x awu.py
 $ sudo cp ./awu.py /usr/local/bin/awu
 ```
@@ -44,12 +44,14 @@ To reply to the thread, simply type `post` and fill out the prompts.
 - To go from a thread back to the board, or from a board back to aw/u/, use the `back` or `up` commands.
 - Keep in mind you can\'t have multiple lines in the content of your thread or reply.
 - Use ^C to cancel the reply or thread creation.
-- Stickied threads are displayed in yellow
+- Stickied threads are displayed by default in yellow
+- Locked threads are displayed in red
 - If you reply with anything other than "burg" on a /burg/ thread, angry burg will be posted.
 
 
 ## To do
 - Make it so that you can browse more pages of a board
-- Display thread title when you show the replies
+- Maybe figure out a way to send newlines
+- ~~Display thread title when you show the replies~~ (Added in 1.2)
 - ~~No color mode (I'm probably too retarded to do that so don't expect it to ever be a thing)~~ (Added in 1.1)
 - Clean up the code (lol I definetly won't do this)
