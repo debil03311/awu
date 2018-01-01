@@ -6,7 +6,7 @@ import requests
 import json
 from colored import fg, bg, attr
 
-version = "1.2"
+version = "1.3"
 boards = [ 'a', 'burg', 'cyb', 'd', 'lain', 'mu', 'new', 'tech', 'test', 'u', 'v', 'all' ]
 
 # Initial colors
@@ -62,14 +62,15 @@ if args.colors:
 
 def board( boardname ):
     while True:
-        # Board prompt
+        # Prompt change after you select a board
         userin = input('\n%s/%s' % ( fg(colors.second), fg(colors.main) ) + str(boardname) + 
-                '%s/%s >> %s' % ( fg(colors.second), fg(colors.main), attr('reset') ))
+                '%s/%s >> %s' % ( fg(colors.second), fg(colors.main), attr('reset') )).lower()
 
         if "thread" in userin:
-            if " list" in userin:
+            if " list" in userin: 
                 # Thread counter
                 tc = 0
+                
                 # Get front page threads from the API
                 t = json.loads( requests.get("https://dangeru.us/api/v2/board/" + boardname + "?page=0").text )
 
@@ -117,22 +118,23 @@ def board( boardname ):
                 except KeyboardInterrupt:
                     pass
 
-            elif len(userin) > 10:
+            elif len(userin) > 7: 
                 while True:
-                    # Thread prompt
-                    threadno = userin.split(' ')[1:][0]
-                    threadnoC = '%s' % (fg(colors.second)) + userin.split(' ')[1:][0] 
-                    th_userin = input('\n' + threadnoC + '%s >> %s' % ( fg(colors.main), attr('reset') ))
+                    # Thread numbers
+                    threadno = userin.split(' ')[1:][0] # The normal thread number
+                    threadnoC = '%s' % (fg(colors.second)) + userin.split(' ')[1:][0] # This is the colored thread number, don't use this outside of strings
+
+                    # Prompt changes once again when you enter a thread
+                    th_userin = input('\n' + threadnoC + '%s >> %s' % ( fg(colors.main), attr('reset') )).lower()
 
                     if th_userin == "show":
-                       
                         # Thread meta from API
                         meta = json.loads(
                                 requests.get("https://dangeru.us/api/v2/thread/" + threadno + "/metadata").text )
 
                         # Thread title
                         print( '\n%s[%s'      % (fg(colors.main),fg(colors.title)), 
-                                meta['title'] + 
+                                meta['title'] , 
                                 '%s]%s'       % (fg(colors.main),attr('reset')) )
                         
                         # Reply counter
@@ -153,14 +155,14 @@ def board( boardname ):
                                 # Please don't look at this either I'm fucking retarded
                                 try:
                                     print(  '\n' + str(is_capcode),
-                                            '%s(%s'       % (fg(colors.main), fg(colors.second))     + str(reps[rc]['hash']) +
-                                            '%s)  No. %s' % (fg(colors.main), fg(colors.second))     + str(reps[rc]['post_id']) +
-                                            '\n%s| %s'    % (fg(colors.main), attr('reset')) + str(reps[rc]['comment']) )
+                                            '%s(%s'       % (fg(colors.main), fg(colors.second))    + str(reps[rc]['hash']) +
+                                            '%s)  No. %s' % (fg(colors.main), fg(colors.second))    + str(reps[rc]['post_id']) +
+                                            '\n%s| %s'    % (fg(colors.main), attr('reset'))        + str(reps[rc]['comment']) )
                                 except UnicodeEncodeError:
                                     print(  '\n' + str(is_capcode),
-                                            '%s(%s'       % (fg(colors.main), fg(colors.second))     + str(reps[rc]['hash']) +
-                                            '%s)  No. %s' % (fg(colors.main), fg(colors.second))     + str(reps[rc]['post_id']) +
-                                            '\n%s| %s'    % (fg(colors.main), attr('reset')) + str(reps[rc]['comment'].encode("utf-8") )[2:][:-1] )
+                                            '%s(%s'       % (fg(colors.main), fg(colors.second))    + str(reps[rc]['hash']) +
+                                            '%s)  No. %s' % (fg(colors.main), fg(colors.second))    + str(reps[rc]['post_id']) +
+                                            '\n%s| %s'    % (fg(colors.main), attr('reset'))        + str(reps[rc]['comment'].encode("utf-8") )[2:][:-1] )
 
                                 rc += 1
 
@@ -183,7 +185,7 @@ def board( boardname ):
 
                             if post_confirm == "y" or post_confirm == "Y":
                                 requests.post('https://dangeru.us/reply', data = {'board': boardname, 'parent': threadno, 'content': post_content})
-                                print('> Reply posted')
+                                print('> Thread created')
 
                         except KeyboardInterrupt:
                             pass
@@ -211,7 +213,6 @@ def board( boardname ):
             print('aw/u/:', userin + ': unrecognized command')
 
 print('\naw/u/ v' + version)
-print('https://github.com/isvinc3s/awu')
 print('Type `%shelp%s` or `%scommands%s` for a list of available commands.' % ( 
     fg(colors.second), attr('reset'),
     fg(colors.second), attr('reset') ))
@@ -220,7 +221,7 @@ while True:
     userin = input('\n%saw%s/%su%s/%s >> %s' % ( 
         fg(colors.main), fg(colors.second),
         fg(colors.main), fg(colors.second),
-        fg(colors.main), attr('reset') ))
+        fg(colors.main), attr('reset') )).lower()
 
     if "board" in userin:
         if " list" in userin:
@@ -243,6 +244,9 @@ while True:
             except IndexError:
                 print('Example usage: board list')
                 print('               board cyb')
+            except requests.exceptions.ConnectionError:
+                print('%sConnection error:%s Check your internet connection and try again.' % (
+                        fg('red'), attr('reset') ))
 
     elif userin == "commands" or userin == "help":
         print('board <option>       Enter a board')

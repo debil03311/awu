@@ -1,3 +1,8 @@
+[01/01/18] v1.3
++ Newlines, finally (thanks nilesr)
++ User input is now case insensitive
+- Shortened README.md
+
 [17/12/17] v1.2
 + Switched to argparse
 + Made it possible to use custom color schemes (--colors)
