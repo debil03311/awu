@@ -163,7 +163,13 @@ def board( boardname ):
 
                     elif th_userin == 'post':
                         try:
-                            post_content = input('%sContent >> %s' % ( fg(colors.main), attr('reset') ))
+                            print("%sType your reply lines here, enter a single \".\" to end%s" % ( fg(colors.main), attr('reset') ))
+                            reply = []
+                            while True:
+                                user_input = input('%sContent >> %s' % ( fg(colors.main), attr('reset') ));
+                                if user_input == ".": break
+                                reply.append(user_input)
+                            post_content = "\n".join(reply)
                             post_confirm = input('%sConfirm (%sy%s/%sN%s) >> %s' % (
                                 fg(colors.main), fg(colors.second),
                                 fg(colors.main), fg(colors.second),
