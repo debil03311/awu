@@ -185,7 +185,7 @@ def board( boardname ):
 
                             if post_confirm == "y" or post_confirm == "Y":
                                 requests.post('https://dangeru.us/reply', data = {'board': boardname, 'parent': threadno, 'content': post_content})
-                                print('> Thread created')
+                                print('> Reply posted')
 
                         except KeyboardInterrupt:
                             pass
