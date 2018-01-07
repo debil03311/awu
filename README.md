@@ -20,7 +20,7 @@ See the wiki
 
 ## To do
 - Make it so that you can browse more pages of a board
-- Figure out a way to display unicode characters
+- ~~Figure out a way to display unicode characters~~ (Kinda added in 1.3.1)
 - ~~Maybe figure out a way to send newlines~~ (Added in 1.3, thanks nilesr)
 - ~~Display thread title when you show the replies~~ (Added in 1.2)
 - ~~No color mode (I'm probably too retarded to do that so don't expect it to ever be a thing)~~ (Added in 1.1)
