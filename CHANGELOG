@@ -1,3 +1,7 @@
+[07/01/18] v1.3.1
++ Warning if variable $PYTHONIOENCODING is not set to UTF-8
++ Command to clear the screen
+
 [01/01/18] v1.3
 + Newlines, finally (thanks nilesr)
 + User input is now case insensitive

@@ -5,9 +5,12 @@ import argparse
 import requests
 import json
 from colored import fg, bg, attr
+from os import system, name as osname, environ
 
-version = "1.3"
+version = "1.3.1"
+clear_prompt = 'cls' if osname == 'nt' else 'clear'
 boards = [ 'a', 'burg', 'cyb', 'd', 'lain', 'mu', 'new', 'tech', 'test', 'u', 'v', 'all' ]
+reset = 'reset'
 
 # Initial colors
 class colors:
@@ -15,6 +18,19 @@ class colors:
     second = 'red'
     sticky = 'yellow'
     title  = 'purple_1b'
+
+'''
+"""     Check wether python encoding is UTF-8
+'''
+
+
+try:
+    if ( environ["PYTHONIOENCODING"] == "UTF-8" ):
+        pass
+    else:
+        raise KeyError
+except KeyError:
+    print('\n[ %sWARNING%s ]' % (fg('red'), attr('reset')), "Enviroment variable $PYTHONIOENCODING is not set to UTF-8, unicode characters will not be displayed.")
 
 
 
@@ -76,6 +92,11 @@ def board( boardname ):
 
                 # If the thread counter exceeds 18 (max posts on a page), stop the counter and print the boards
                 while tc < 20:
+                    #if boardname == "all":
+                    #    is_all = '%s/%s' % (fg(colors.second), fg(colors.main)) + str(t[tc]['board']) + '%s/' % (fg(colors.second)),
+                    #else:
+                    #    is_all = ""
+
                     if ( t[tc]['is_locked'] == True ):
                         if ( t[tc]['sticky'] == True ):
                             th_color = colors.sticky
@@ -90,7 +111,8 @@ def board( boardname ):
 
                     # Please don't look at this I'm fucking retarded.
                     print('%s' % (fg(colors.second)),   str( t[tc]['post_id'] ) , 
-                            '%s' % (fg(th_color)),  str( t[tc]['title'].encode('utf-8') )[2:][:-1] ,
+                            '%s' % (fg(th_color)),      str( t[tc]['title'].encode('utf-8') )[2:][:-1] ,
+                            #is_all ,
                             '%s' % (fg(colors.second)), str( t[tc]['number_of_replies'] ) , 
                             '%s' % (attr('reset')) )
 
@@ -155,9 +177,9 @@ def board( boardname ):
                                 # Please don't look at this either I'm fucking retarded
                                 try:
                                     print(  '\n' + str(is_capcode),
-                                            '%s(%s'       % (fg(colors.main), fg(colors.second))    + str(reps[rc]['hash']) +
-                                            '%s)  No. %s' % (fg(colors.main), fg(colors.second))    + str(reps[rc]['post_id']) +
-                                            '\n%s| %s'    % (fg(colors.main), attr('reset'))        + str(reps[rc]['comment']) )
+                                        '%s(%s'       % (fg(colors.main), fg(colors.second))    + str(reps[rc]['hash']) +
+                                        '%s)  No. %s' % (fg(colors.main), fg(colors.second))    + str(reps[rc]['post_id']) +
+                                        '\n%s| %s'    % (fg(colors.main), attr('reset'))        + str(reps[rc]['comment']) )
                                 except UnicodeEncodeError:
                                     print(  '\n' + str(is_capcode),
                                             '%s(%s'       % (fg(colors.main), fg(colors.second))    + str(reps[rc]['hash']) +
@@ -167,6 +189,9 @@ def board( boardname ):
                                 rc += 1
 
                         except IndexError:
+                            pass
+
+                        except json.decoder.JSONDecodeError:
                             pass
 
                     elif th_userin == 'post':
@@ -193,15 +218,22 @@ def board( boardname ):
                     elif th_userin == 'back' or th_userin == 'up':
                         break
 
+                    elif th_userin == 'clear' or th_userin == 'back':
+                        system(clear_prompt)
+
                     elif th_userin == 'exit' or th_userin == 'quit':
                         sys.exit()
 
                     else:
                         print('aw/u/:', th_userin +": unrecognized command")
-
+            
             else:
                 print("Example usage: thread list")
                 print("               thread 61204")
+
+
+        elif userin == "clear" or userin == "cls":
+            system(clear_prompt)
 
         elif userin == "back" or userin == "up":
             break
@@ -224,26 +256,36 @@ while True:
         fg(colors.main), attr('reset') )).lower()
 
     if "board" in userin:
-        if " list" in userin:
-            print('/a/    - Anime & Manga')
-            print('/burg/ - Burg')
-            print('/cyb/  - Cyberpunk Life')
-            print('/d/    - Doujin')
-            print('/lain/ - Cyberpunk')
-            print('/mu/   - Music')
-            print('/new/  - News & Politics')
-            print('/tech/ - Technology')
-            print('/test/ - Awoo testing grounds')
-            print('/u/    - Random')
-            print('/v/    - Video games')
-            print('/all/  - All')
+        if " list" in userin: 
+            # Fetch boards from the API
+            boards = json.loads( requests.get("https://dangeru.us/api/v2/boards").text )
 
+            # Array board counter
+            bc = 0
+
+            while True:
+                try:
+                    # Get the details of the current board in the counter
+                    detail = json.loads( requests.get("https://dangeru.us/api/v2/board/" + boards[bc] + "/detail").text )
+
+                    # Board in the counter and its description
+                    print(  "%s/%s" % ( fg(colors.second), fg(colors.main) ) + 
+                            boards[bc] + 
+                            "%s/%s" % ( fg(colors.second), attr('reset') ) + 
+                            "\t\t" + detail['desc'] )
+                    bc += 1
+
+                except IndexError:
+                    break
+            
         elif any( name in userin for name in boards ):
             try:
                 board(str( userin.split(' ')[1:][0] ))
+            
             except IndexError:
                 print('Example usage: board list')
                 print('               board cyb')
+            
             except requests.exceptions.ConnectionError:
                 print('%sConnection error:%s Check your internet connection and try again.' % (
                         fg('red'), attr('reset') ))
@@ -258,10 +300,11 @@ while True:
         print('  (id)                 Enter the thread with the selected ID')
         print('show                 Show a thread\'s replies    (only works if you are in a therad)')
         print('post                 Reply to a thread          (only works if you are in a thread)')
-        print('back                 Move up one level          (thread > board > aw/u/)')
-        print('up                   Move up one level          (thread > board > aw/u/)')
-        print('exit                 Terminate aw/u/')
-        print('quit                 Terminate aw/u/')
+        print('back|up              Move up one level          (thread > board > aw/u/)')
+        print('exit|quit            Terminate aw/u/')
+
+    elif userin == "clear" or userin == "cls":
+        system(clear_prompt)
 
     elif userin == "exit" or userin == "quit":
         sys.exit()
