@@ -218,7 +218,7 @@ def board( boardname ):
                     elif th_userin == 'back' or th_userin == 'up':
                         break
 
-                    elif th_userin == 'clear' or th_userin == 'back':
+                    elif th_userin == 'clear' or th_userin == 'cls':
                         system(clear_prompt)
 
                     elif th_userin == 'exit' or th_userin == 'quit':
